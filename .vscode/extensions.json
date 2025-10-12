@@ -5,6 +5,23 @@
         "ms-python.mypy-type-checker",
         "charliermarsh.ruff",
         "nwgh.bandit",
-        "ms-toolsai.datawrangler"
+        "ms-toolsai.datawrangler",
+        "ms-ossdata.vscode-pgsql",
+        "docker.docker",
+        "ms-vscode-remote.vscode-remote-extensionpack",
+        "anweber.vscode-httpyac",
+        "dotenv.dotenv-vscode",
+        "mhutchie.git-graph",
+        "eamodio.gitlens",
+        "ryu1kn.partial-diff",
+        "christian-kohler.path-intellisense",
+        "paskie.raythis-plus",
+        "wmaurer.change-case",
+        "deerawan.vscode-faker",
+        "qcz.text-power-tools",
+        "gruntfuggly.todo-tree",
+        "shardulm94.trailing-spaces",
+        "tomoki1207.pdf",
+        "formulahendry.code-runner"
     ]
 }
