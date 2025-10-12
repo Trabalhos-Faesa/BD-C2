@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 
 
 app = FastAPI()
@@ -10,5 +10,5 @@ async def health_check():
 
 
 @app.get("/")
-async def read_root():
+async def read_root(request: Request):  # request.scope
     return {"Hello": "World"}
