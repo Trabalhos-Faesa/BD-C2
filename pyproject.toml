@@ -1,0 +1,153 @@
+[project]
+name = "BD-C2"
+version = "0.0.1"
+description = "Banco de Dados - Trabalho C2"
+readme = "README.md"
+requires-python = "~=3.13.0"
+
+# MARK: Dependencies
+# uv sync --all-extras --all-groups
+# uv lock --upgrade
+# uv export --all-extras --all-groups > requirements.txt
+dependencies = [
+    "fastapi[standard] ~= 0.119",
+    "orjson ~= 3.11",
+
+    "SQLAlchemy ~= 2.0",
+    # "pyodbc ~= 5.2",
+    # "aioodbc ~= 0.5",
+
+    # "redis[hiredis] ~= 6.4",
+
+    "python-decouple ~= 3.8",
+
+    "opentelemetry-exporter-otlp ~= 1.37",  # opentelemetry-exporter-otlp-proto-http
+    "opentelemetry-instrumentation-system-metrics ~= 0.58b0",
+    # "opentelemetry-instrumentation-logging ~= 0.58b0",
+    # "opentelemetry-instrumentation-threading ~= 0.58b0",
+    "opentelemetry-instrumentation-dbapi ~= 0.58b0",
+    "opentelemetry-instrumentation-sqlalchemy ~= 0.58b0",
+    "opentelemetry-instrumentation-redis ~= 0.58b0",
+    "logfmter ~= 0.0.10",
+    "requests ~= 2.32",  # TODO: dev only?
+    # "rich ~= 14.1",  # TODO: dev only?
+]
+
+[project.optional-dependencies]
+# uv add <pkg> --optional ci
+ci = [
+    # Static Analysis
+    # Versão atual do MyPy no VSCode (ext ms-python.mypy-type-checker)
+    # https://github.com/microsoft/vscode-mypy?tab=readme-ov-file#mypy-extension-for-visual-studio-code
+    "mypy ~= 1.15",
+    "bandit[toml] ~= 1.8",
+    "ruff ~= 0.12",
+
+    # Automated Tests
+    "pytest ~= 8.4",
+    "coverage ~= 7.10",
+
+    # Stub-only Packages
+    "decouple-types",
+
+    # TODO: By exec: rm -rf .mypy_cache && MYPYPATH=src mypy --install-types --namespace-packages --explicit-package-bases .
+]
+
+[dependency-groups]
+# Unlike optional dependencies,
+#   dev dependencies are local-only dependencies,
+#   and will not be included in the project requirements when published to PyPI or other indexes.
+# https://docs.astral.sh/uv/concepts/projects/dependencies/#development-dependencies
+# uv add --group dev <pkg>
+# uv add --dev <pkg>
+dev = [
+    # TODO: Dev-only Code Dependencies
+    # Automated Tests
+    "pytest-watcher ~= 0.4",
+    # Exploratory Data Analysis
+    "jupyter ~= 1.1",
+]
+
+# [tool.uv]
+# default-groups = "all"
+
+
+# MARK: pytest
+[tool.pytest.ini_options]
+pythonpath = "src"
+# python_files = [
+#     "test.py",
+#     "tests.py",
+#     "test_*.py",
+#     "tests_*.py",
+#     "*_test.py",
+#     "*_tests.py",
+# ]
+addopts = [
+    "--doctest-modules",
+    "--doctest-continue-on-failure",
+    # "--ignore-glob=*/pages/*/main.py",
+    "--import-mode=importlib",
+    "--strict-markers",
+    "-rP",
+    # "-rA",
+]
+markers = [
+    "slow: Run slow tests",
+]
+log_level = "WARNING"
+
+
+# MARK: Coverage.py
+[tool.coverage.run]
+branch = true
+omit = [
+    "venv/*",
+    ".venv/*",
+    "*/test.py",
+    "*/tests.py",
+    "*/test_*.py",
+    "*/tests_*.py",
+    "*/*_test.py",
+    "*/*_tests.py",
+]
+
+
+# MARK: Mypy
+[tool.mypy]
+# python_version = "3.14"
+# strict = true
+check_untyped_defs = true
+# https://mypy.readthedocs.io/en/stable/running_mypy.html#mapping-paths-to-modules
+# https://mypy.readthedocs.io/en/stable/config_file.html#confval-explicit_package_bases
+mypy_path = "$MYPY_CONFIG_FILE_DIR/src"  # "src"
+namespace_packages = true
+explicit_package_bases = true
+
+[[tool.mypy.overrides]]
+module = [
+    "ipywidgets.*",
+]
+follow_untyped_imports = true
+
+# [[tool.mypy.overrides]]
+# module = ["h3.*"]
+# ignore_missing_imports = true
+
+
+# MARK: Bandit
+[tool.bandit]
+exclude_dirs = [
+    "tests",
+    "*/tests",
+]
+
+
+# MARK: Ruff
+[tool.ruff]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.format]
+quote-style = "single"
+indent-style = "space"
