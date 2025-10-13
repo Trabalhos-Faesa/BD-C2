@@ -48,8 +48,8 @@ async def main():
 
     print('[*] CONNECTION_STRING:')
     print(DB_CONNECTION_STRING)
-    print()
 
+    print()
     print('[*] For: Sync Engine')
     print('[*] Connecting...')
     with sync_engine.connect() as conn:
