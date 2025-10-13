@@ -1,8 +1,12 @@
 import asyncio
+from pathlib import Path
+from typing import Any
 
+import sqlalchemy.exc
 from decouple import config
 from sqlalchemy import (
     URL,
+    CursorResult,
     Engine,
     create_engine,
     text,
@@ -12,10 +16,20 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from abstract import SQLResultDict, SQLResultStatus
 from utils.abstract import Singleton
 
 
 DB_CONNECTION_STRING = config('DB_CONNECTION_STRING')
+
+
+def error_response(msg: str) -> SQLResultDict:
+    return {
+        'rows': [],
+        'rowcount': -1,
+        'status': SQLResultStatus.ERROR,
+        'msg': str(msg),
+    }
 
 
 def get_engine(
@@ -46,15 +60,58 @@ def get_async_engine(
 
 # XXX: LRU cache over get_*engine is a batter way?
 class DBEngines(metaclass=Singleton):
-    def __init__(
-        self,
-        engine_args=[],
-        engine_kwargs={},
-        aengine_args=[],
-        aengine_kwargs={},
-    ) -> None:
-        self.engine: Engine = get_engine(*engine_args, **engine_kwargs)
-        self.aengine: AsyncEngine = get_async_engine(*aengine_args, **aengine_kwargs)
+    def __init__(self) -> None:
+        self.engine: Engine = get_engine()
+        self.aengine: AsyncEngine = get_async_engine()
+
+
+db_engines = DBEngines()
+sync_engine = db_engines.engine
+async_engine = db_engines.aengine
+
+
+def get_query(sql_file: str) -> str:
+    file_path = Path(__file__).parent / ('../sql/' + sql_file)
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            return content
+    except (FileNotFoundError, IsADirectoryError):
+        raise ValueError('Erro ao carregar arquivo SQL! Verifique o nome.')
+    except OSError:  # FileNotFoundError, IsADirectoryError, PermissionError, ...
+        raise
+
+
+def wrap_result(result: CursorResult) -> SQLResultDict:
+    if result.returns_rows:
+        rows = result.mappings().all()
+    else:
+        rows = []
+    return {
+        'rows': rows,  # type: ignore[typeddict-item]
+        'rowcount': result.rowcount,
+    }
+
+
+def exec_query(
+    sql_file: str,
+    query_params: dict[str, Any] | None = None,
+    engine: Engine = sync_engine,
+) -> SQLResultDict:
+    try:
+        query_string = get_query(sql_file)
+    except (ValueError, OSError) as err:
+        response: SQLResultDict = error_response(str(err))
+    try:
+        with engine.begin() as conn:
+            result = conn.execute(text(query_string), query_params)
+            response = wrap_result(result)
+        response.update({
+            'status': SQLResultStatus.SUCCESS,
+        })
+    except sqlalchemy.exc.SQLAlchemyError as err:
+        response = error_response(str(err))
+    return response
 
 
 async def main():
