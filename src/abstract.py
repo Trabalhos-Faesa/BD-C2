@@ -1,12 +1,17 @@
 from enum import Enum
 from typing import (
     Any,
+    Generic,
     Mapping,
     Optional,
     TypedDict,
+    TypeVar,
 )
 
 from pydantic import BaseModel
+
+
+T = TypeVar("T")
 
 
 class SQLResultStatus(str, Enum):
@@ -27,9 +32,9 @@ class SQLResultDict(SQLResultDictBase, total=False):
     msg: Optional[str]
 
 
-class SQLResult(BaseModel):
+class SQLResult(BaseModel, Generic[T]):
     # __annotations__ = typing.get_type_hints(SQLResultDict)
     rowcount: int
-    rows: list[dict]
+    rows: list[T]
     status: Optional[SQLResultStatus] = None
     msg: Optional[str] = None
