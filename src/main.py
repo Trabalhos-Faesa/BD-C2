@@ -2,12 +2,16 @@ from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
 
 from abstract import SQLResult, SQLResultStatus
-from views import management
+from views import (
+    cliente,
+    management,
+)
 
 
 app = FastAPI(default_response_class=ORJSONResponse)
 
 app.include_router(management.router)
+app.include_router(cliente.router)
 
 
 @app.get("/")
