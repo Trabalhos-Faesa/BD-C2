@@ -45,6 +45,7 @@ ci = [
     # Automated Tests
     "pytest ~= 8.4",
     "coverage ~= 7.10",
+    "pytest-asyncio ~= 1.2",
 
     # Stub-only Packages
     "decouple-types",
