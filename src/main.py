@@ -1,12 +1,13 @@
 from fastapi import FastAPI, Request
+# from fastapi.responses import ORJSONResponse
+
+
+from views import management
 
 
 app = FastAPI()
 
-
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
+app.include_router(management.router)
 
 
 @app.get("/")
