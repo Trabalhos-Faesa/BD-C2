@@ -1,4 +1,3 @@
-import asyncio
 from pathlib import Path
 from typing import Any
 
@@ -100,8 +99,8 @@ def exec_query(
 ) -> SQLResultDict:
     try:
         query_string = get_query(sql_file)
-    except (ValueError, OSError) as err:
-        response: SQLResultDict = error_response(str(err))
+    except (ValueError, OSError) as _err:
+        response: SQLResultDict = error_response(str(_err))
     try:
         with engine.begin() as conn:
             result = conn.execute(text(query_string), query_params)
@@ -109,6 +108,14 @@ def exec_query(
         response.update({
             'status': SQLResultStatus.SUCCESS,
         })
-    except sqlalchemy.exc.SQLAlchemyError as err:
-        response = error_response(str(err))
+    except sqlalchemy.exc.DBAPIError as _err:
+        response = error_response(
+            f'SQLAlchemyError: {type(_err)!r} / {type(_err.orig)!r}'
+        )
+    except sqlalchemy.exc.SQLAlchemyError as _err:
+        # response = error_response(str(_err))  # FIXME: Don't use in production!!!
+        response = error_response(
+            f'SQLAlchemyError: {type(_err)!r}'
+        )
+        # raise
     return response
