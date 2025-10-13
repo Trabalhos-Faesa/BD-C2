@@ -12,6 +12,8 @@ from sqlalchemy.ext.asyncio import (
     create_async_engine,
 )
 
+from utils.abstract import Singleton
+
 
 DB_CONNECTION_STRING = config('DB_CONNECTION_STRING')
 
@@ -42,9 +44,26 @@ def get_async_engine(
     return engine
 
 
+# XXX: LRU cache over get_*engine is a batter way?
+class DBEngines(metaclass=Singleton):
+    def __init__(
+        self,
+        engine_args=[],
+        engine_kwargs={},
+        aengine_args=[],
+        aengine_kwargs={},
+    ) -> None:
+        self.engine: Engine = get_engine(*engine_args, **engine_kwargs)
+        self.aengine: AsyncEngine = get_async_engine(*aengine_args, **aengine_kwargs)
+
+
 async def main():
-    sync_engine = get_engine()
-    async_engine = get_async_engine()
+    """
+    Cole o código de `utils.abstract.Singleton` nesse arquivo para testar a conn. com o DB executando diretamente
+    Ou simplesmente execute `pytest -k 'TestDBEngines'`
+    """
+    sync_engine = DBEngines().engine
+    async_engine = DBEngines().aengine
 
     print('[*] CONNECTION_STRING:')
     print(DB_CONNECTION_STRING)
