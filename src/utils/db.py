@@ -101,6 +101,7 @@ def exec_query(
         query_string = get_query(sql_file)
     except (ValueError, OSError) as _err:
         response: SQLResultDict = error_response(str(_err))
+
     try:
         with engine.begin() as conn:
             result = conn.execute(text(query_string), query_params)
@@ -118,4 +119,34 @@ def exec_query(
             f'SQLAlchemyError: {type(_err)!r}'
         )
         # raise
+
+    return response
+
+
+async def aexec_query(
+    sql_file: str,
+    query_params: dict[str, Any] | None = None,
+    aengine: AsyncEngine = async_engine,
+) -> SQLResultDict:
+    try:
+        query_string = get_query(sql_file)
+    except (ValueError, OSError) as _err:
+        response: SQLResultDict = error_response(str(_err))
+
+    try:
+        async with aengine.begin() as conn:
+            result = await conn.execute(text(query_string), query_params)
+            response = wrap_result(result)
+        response.update({
+            'status': SQLResultStatus.SUCCESS,
+        })
+    except sqlalchemy.exc.DBAPIError as _err:
+        response = error_response(
+            f'SQLAlchemyError: {type(_err)!r} / {type(_err.orig)!r}'
+        )
+    except sqlalchemy.exc.SQLAlchemyError as _err:
+        response = error_response(
+            f'SQLAlchemyError: {type(_err)!r}'
+        )
+
     return response
