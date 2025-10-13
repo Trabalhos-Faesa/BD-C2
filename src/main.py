@@ -1,11 +1,10 @@
 from fastapi import FastAPI, Request
-# from fastapi.responses import ORJSONResponse
-
+from fastapi.responses import ORJSONResponse
 
 from views import management
 
 
-app = FastAPI()
+app = FastAPI(default_response_class=ORJSONResponse)
 
 app.include_router(management.router)
 
