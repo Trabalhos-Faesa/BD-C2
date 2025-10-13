@@ -20,4 +20,4 @@ CREATE TABLE cliente (
     CONSTRAINT unique_email UNIQUE (email),
     CONSTRAINT unique_cpf UNIQUE (cpf)
 );
-SELECT * FROM cliente LIMIT 10;
+-- SELECT * FROM cliente LIMIT 10;
