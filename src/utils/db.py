@@ -1,8 +1,8 @@
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional, Union
 
 import sqlalchemy.exc
-from decouple import config
+from decouple import config  # type: ignore[import-untyped]
 from sqlalchemy import (
     URL,
     CursorResult,
@@ -32,7 +32,7 @@ def error_response(msg: str) -> SQLResultDict:
 
 
 def get_engine(
-    connection_string: str | URL = DB_CONNECTION_STRING,
+    connection_string: Union[str, URL] = DB_CONNECTION_STRING,
     *args,
     **kwargs,
 ) -> Engine:
@@ -45,7 +45,7 @@ def get_engine(
 
 
 def get_async_engine(
-    connection_string: str | URL = DB_CONNECTION_STRING,
+    connection_string: Union[str, URL] = DB_CONNECTION_STRING,
     *args,
     **kwargs,
 ) -> AsyncEngine:
@@ -94,7 +94,7 @@ def wrap_result(result: CursorResult) -> SQLResultDict:
 
 def exec_query(
     sql_file: str,
-    query_params: dict[str, Any] | None = None,
+    query_params: Optional[dict[str, Any]] = None,
     engine: Engine = sync_engine,
 ) -> SQLResultDict:
     try:
@@ -126,7 +126,7 @@ def exec_query(
 
 async def aexec_query(
     sql_file: str,
-    query_params: dict[str, Any] | None = None,
+    query_params: Optional[dict[str, Any]] = None,
     aengine: AsyncEngine = async_engine,
 ) -> SQLResultDict:
     try:
