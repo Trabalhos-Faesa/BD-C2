@@ -35,13 +35,14 @@ COPY --from=builder /app/.venv/ ./.venv/
 COPY --chown=${USER}:${USER} . .
 
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONPATH="./src/"
 ENV PYTHONUNBUFFERED=1
 
 HEALTHCHECK CMD curl --fail http://localhost:8000/-/health
 
 EXPOSE 8000
 # CMD ["fastapi", "run", "src/main.py", "--port", "8000"]
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 # If running behind a proxy like Nginx or Traefik add --proxy-headers
 # https://fastapi.tiangolo.com/pt/deployment/docker/#por-tras-de-um-proxy-de-terminacao-tls
-# CMD ["uvicorn", "app.main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]
+# CMD ["uvicorn", "main:app", "--proxy-headers", "--host", "0.0.0.0", "--port", "8000"]
