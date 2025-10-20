@@ -8,7 +8,7 @@ from utils.db import aexec_query
 router = APIRouter(prefix='/account', tags=['account'])
 
 
-# TODO: return a JWT and store the hash of the password
+# TODO: return a JWT and store+check the hash of the password
 @router.post('/login', response_model=LoginSuccess)
 async def login(credentials: LoginPayload) -> LoginSuccess:
     """
