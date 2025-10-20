@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class pedido(BaseModel):
+class Pedido(BaseModel):
     id_pedido: Optional[int] = None
     id_cliente: int
     data_pedido: Optional[str] = None

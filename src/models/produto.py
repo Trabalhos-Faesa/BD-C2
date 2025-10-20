@@ -2,7 +2,7 @@ from typing import Annotated, Optional
 
 from pydantic import AfterValidator, BaseModel
 
-class produtos(BaseModel):
+class Produtos(BaseModel):
     id_produto: int
     nomeProduto: str
     descricao: str
