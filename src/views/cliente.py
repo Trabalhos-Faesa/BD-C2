@@ -29,3 +29,14 @@ async def read_one(id_cliente: int) -> SQLResultDict:
             'id_cliente': id_cliente,
         },
     )
+
+
+# TODO: Partial update with .patch
+@router.put('/{id_cliente}', response_model=SQLResult[Cliente])
+async def update(id_cliente: int, cliente: Cliente) -> SQLResultDict:
+    return await aexec_query(
+        'cliente/update.sql',
+        cliente.model_dump() | {
+            'id_cliente': id_cliente,
+        },
+    )
