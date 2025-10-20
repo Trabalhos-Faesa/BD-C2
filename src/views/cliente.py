@@ -40,3 +40,13 @@ async def update(id_cliente: int, cliente: Cliente) -> SQLResultDict:
             'id_cliente': id_cliente,
         },
     )
+
+
+@router.delete('/{id_cliente}', response_model=SQLResult[Cliente])
+async def delete(id_cliente: int) -> SQLResultDict:
+    return await aexec_query(
+        'cliente/delete.sql',
+        {
+            'id_cliente': id_cliente,
+        }
+    )
