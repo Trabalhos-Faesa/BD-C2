@@ -37,7 +37,7 @@ COPY --chown=${USER}:${USER} . .
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 
-HEALTHCHECK CMD curl --fail http://localhost:8000/health
+HEALTHCHECK CMD curl --fail http://localhost:8000/-/health
 
 EXPOSE 8000
 CMD ["fastapi", "run", "src/main.py", "--port", "8000"]
