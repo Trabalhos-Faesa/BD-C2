@@ -4,14 +4,17 @@ from fastapi.responses import ORJSONResponse
 from abstract import SQLResult, SQLResultStatus
 from views import (
     cliente,
+    carrinho,
     management,
 )
 
 
 app = FastAPI(default_response_class=ORJSONResponse)
 
+
 app.include_router(management.router)
 app.include_router(cliente.router)
+app.include_router(carrinho.router)
 
 
 @app.get("/")
