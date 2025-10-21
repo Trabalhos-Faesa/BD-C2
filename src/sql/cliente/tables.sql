@@ -1,24 +1,24 @@
 CREATE TABLE cliente (
     id_cliente SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    nome TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
     cpf VARCHAR(14) UNIQUE NOT NULL,
-    cep VARCHAR(10),
-    rua VARCHAR(100),
-    bairro VARCHAR(60),
-    cidade VARCHAR(60),
-    numero VARCHAR(10),
-    complemento VARCHAR(60),
+    cep VARCHAR(9) NOT NULL,
+    rua TEXT,
+    bairro TEXT,
+    cidade TEXT,
+    numero TEXT,
+    complemento TEXT,
     telefone VARCHAR(20),
-    senha VARCHAR(100) NOT NULL
+    senha VARCHAR(60) NOT NULL
 );
 CREATE TABLE produto (
     id_produto SERIAL PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
+    nome TEXT NOT NULL,
     descricao TEXT,
     preco DECIMAL(10,2) NOT NULL,
     quantidade_estoque INT NOT NULL,
-    categoria VARCHAR(50)
+    categoria TEXT
 );
 CREATE TABLE carrinho_de_compras (
     id_carrinho SERIAL PRIMARY KEY,
