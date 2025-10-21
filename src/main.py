@@ -10,6 +10,7 @@ app = FastAPI(default_response_class=ORJSONResponse)
 app.include_router(views.management.router)
 app.include_router(views.cliente.router)
 app.include_router(views.account.router)
+app.include_router(views.produto.router)
 
 
 @app.get("/")
