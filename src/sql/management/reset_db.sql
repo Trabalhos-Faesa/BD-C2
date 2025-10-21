@@ -20,4 +20,15 @@ CREATE TABLE cliente (
     CONSTRAINT unique_email UNIQUE (email),
     CONSTRAINT unique_cpf UNIQUE (cpf)
 );
--- SELECT * FROM cliente LIMIT 10;
+
+
+DROP TABLE IF EXISTS produto CASCADE;
+CREATE TABLE produto (
+    id_produto INT GENERATED ALWAYS AS IDENTITY,
+    nome TEXT NOT NULL,
+    descricao TEXT DEFAULT NULL,
+    preco NUMERIC(10,2) NOT NULL,
+    quantidade_estoque INT DEFAULT 0,
+    categoria TEXT DEFAULT NULL
+);
+
