@@ -129,6 +129,7 @@ def exec_query(
         query_string = get_query(sql_file)
     except (ValueError, OSError) as _err:
         response: SQLResultDict = error_response(str(_err))
+        return response
 
     try:
         with engine.begin() as conn:
