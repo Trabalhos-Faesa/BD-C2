@@ -1,5 +1,5 @@
 -- Busca cliente por email e senha para autenticação
-SELECT
+SELECT 
     id_cliente,
     email,
     senha,
