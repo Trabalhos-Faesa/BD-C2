@@ -3,6 +3,7 @@ from . import (
 	carrinho,
 	management,
 	produto,
+ 	relatorios,
 )
 
 __all__ = [
@@ -10,4 +11,5 @@ __all__ = [
 	'carrinho',
 	'management',
 	'produto',
+ 	'relatorios',
 ]
