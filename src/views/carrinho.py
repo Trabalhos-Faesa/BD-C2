@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status
 from pydantic import BaseModel, Field
 
 from abstract import SQLResult, SQLResultDict, SQLResultStatus
-from utils.db import aexec_query
+from utils.db import exec_query
 
 
 router = APIRouter(prefix='/carrinho', tags=['carrinho'])
@@ -14,7 +14,7 @@ class StartCartPayload(BaseModel):
 
 @router.post('/', response_model=SQLResult[dict])
 async def start_or_get_cart(payload: StartCartPayload) -> SQLResultDict:
-    return await aexec_query(
+    return exec_query(
         'carrinho/create_or_get_open.sql',
         {'id_cliente': payload.id_cliente},
     )
@@ -27,7 +27,7 @@ class AddItemPayload(BaseModel):
 
 @router.post('/{id_carrinho}/item', response_model=SQLResult[dict])
 async def add_item(id_carrinho: int, payload: AddItemPayload) -> SQLResultDict:
-    result = await aexec_query(
+    result = exec_query(
         'carrinho/add_item.sql',
         {
             'id_carrinho': id_carrinho,
@@ -47,7 +47,7 @@ async def add_item(id_carrinho: int, payload: AddItemPayload) -> SQLResultDict:
 
 @router.get('/{id_carrinho}/itens', response_model=SQLResult[dict])
 async def read_items(id_carrinho: int) -> SQLResultDict:
-    return await aexec_query(
+    return exec_query(
         'carrinho/read_items.sql',
         {'id_carrinho': id_carrinho},
     )
@@ -56,7 +56,7 @@ async def read_items(id_carrinho: int) -> SQLResultDict:
 @router.post('/{id_carrinho}/finalizar', response_model=SQLResult[dict])
 async def finalizar_compra(id_carrinho: int) -> SQLResultDict:
     """Fecha o carrinho e gera um pedido com o valor total."""
-    result = await aexec_query(
+    result = exec_query(
         'pedido/create_from_cart.sql',
         {'id_carrinho': id_carrinho},
     )
@@ -76,7 +76,7 @@ class RemoveQuantityPayload(BaseModel):
 
 @router.post('/{id_carrinho}/item/{id_produto}/remover', response_model=SQLResult[dict])
 async def remove_quantity(id_carrinho: int, id_produto: int, payload: RemoveQuantityPayload) -> SQLResultDict:
-    result = await aexec_query(
+    result = exec_query(
         'carrinho/decrement_item.sql',
         {
             'id_carrinho': id_carrinho,
@@ -94,7 +94,7 @@ async def remove_quantity(id_carrinho: int, id_produto: int, payload: RemoveQuan
 
 @router.delete('/{id_carrinho}/item/{id_produto}', response_model=SQLResult[dict])
 async def remove_item(id_carrinho: int, id_produto: int) -> SQLResultDict:
-    result = await aexec_query(
+    result = exec_query(
         'carrinho/remove_item.sql',
         {
             'id_carrinho': id_carrinho,

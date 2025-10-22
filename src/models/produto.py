@@ -1,12 +1,14 @@
+from datetime import datetime
 from typing import Annotated, Optional
 
-from pydantic import AfterValidator, BaseModel
+from pydantic import BaseModel, Field
 
-class produtos(BaseModel):
-    id_produto: int
-    nomeProduto: str
-    descricao: str
-    preco: float
-    data_criacao: Optional[str] = None
-    quantidade_estoque: Annotated[int, AfterValidator(lambda v: v if v >= 0 else 0)]
-    categoria: str
+
+class Produto(BaseModel):
+    id_produto: Optional[int] = None
+    nome: Annotated[str, Field(min_length=1)]
+    descricao: Optional[str] = None
+    preco: Annotated[float, Field(ge=0)]
+    quantidade_estoque: Annotated[int, Field(ge=0)] = 0
+    categoria: Optional[str] = None
+    data_criacao: Optional[datetime] = None

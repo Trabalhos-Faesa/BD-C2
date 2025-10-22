@@ -20,7 +20,6 @@ from utils.abstract import Singleton
 
 
 DB_CONNECTION_STRING = config('DB_CONNECTION_STRING')
-# Optional async connection string; when not provided we'll derive one from the sync DSN
 DB_CONNECTION_STRING_ASYNC: Optional[str] = config('DB_CONNECTION_STRING_ASYNC', default=None)
 
 
@@ -30,18 +29,14 @@ def ensure_async_driver_dsn(connection_string: Union[str, URL]) -> Union[str, UR
     - If a URL object is provided, adjust its drivername to postgresql+asyncpg.
     - If a string is provided, replace the scheme prefix when applicable.
     """
-    # Honor explicit async DSN if present in environment (string only)
     if isinstance(connection_string, str):
         s = connection_string
-        # If an explicit async DSN exists, prefer it
         if DB_CONNECTION_STRING_ASYNC:
             return DB_CONNECTION_STRING_ASYNC
         if s.startswith('postgresql://') and 'postgresql+asyncpg://' not in s:
             return s.replace('postgresql://', 'postgresql+asyncpg://', 1)
-        # Already async or another driver/db
         return s
 
-    # URL object path
     url = connection_string
     if url.drivername.startswith('postgresql') and '+asyncpg' not in url.drivername:
         return url.set(drivername='postgresql+asyncpg')
@@ -129,6 +124,7 @@ def exec_query(
         query_string = get_query(sql_file)
     except (ValueError, OSError) as _err:
         response: SQLResultDict = error_response(str(_err))
+        return response
 
     try:
         with engine.begin() as conn:
@@ -168,6 +164,70 @@ async def aexec_query(
         response.update({
             'status': SQLResultStatus.SUCCESS,
         })
+    except sqlalchemy.exc.DBAPIError as _err:
+        response = error_response(
+            f'SQLAlchemyError: {type(_err)!r} / {type(_err.orig)!r}'
+        )
+    except sqlalchemy.exc.SQLAlchemyError as _err:
+        response = error_response(
+            f'SQLAlchemyError: {type(_err)!r}'
+        )
+
+    return response
+
+
+async def aexec_script(
+    sql_file: str,
+    aengine: AsyncEngine = async_engine,
+) -> SQLResultDict:
+    """Execute multi-statement SQL scripts (like reset_db.sql) using exec_driver_sql."""
+    try:
+        query_string = get_query(sql_file)
+    except (ValueError, OSError) as _err:
+        response: SQLResultDict = error_response(str(_err))
+        return response
+
+    try:
+        async with aengine.begin() as conn:
+            await conn.exec_driver_sql(query_string)
+        response = {
+            'rows': [],
+            'rowcount': -1,
+            'status': SQLResultStatus.SUCCESS,
+            'msg': 'Script executed successfully'
+        }
+    except sqlalchemy.exc.DBAPIError as _err:
+        response = error_response(
+            f'SQLAlchemyError: {type(_err)!r} / {type(_err.orig)!r}'
+        )
+    except sqlalchemy.exc.SQLAlchemyError as _err:
+        response = error_response(
+            f'SQLAlchemyError: {type(_err)!r}'
+        )
+
+    return response
+
+
+def exec_script(
+    sql_file: str,
+    engine: Engine = sync_engine,
+) -> SQLResultDict:
+    """Execute multi-statement SQL scripts (like reset_db.sql) synchronously."""
+    try:
+        query_string = get_query(sql_file)
+    except (ValueError, OSError) as _err:
+        response: SQLResultDict = error_response(str(_err))
+        return response
+
+    try:
+        with engine.begin() as conn:
+            conn.exec_driver_sql(query_string)
+        response = {
+            'rows': [],
+            'rowcount': -1,
+            'status': SQLResultStatus.SUCCESS,
+            'msg': 'Script executed successfully'
+        }
     except sqlalchemy.exc.DBAPIError as _err:
         response = error_response(
             f'SQLAlchemyError: {type(_err)!r} / {type(_err.orig)!r}'

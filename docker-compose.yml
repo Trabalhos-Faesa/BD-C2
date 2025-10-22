@@ -5,8 +5,7 @@ services:
   app:
     build: .
     container_name: app
-    # depends_on: [redis, grafana]
-    depends_on: [grafana]
+    depends_on: [postgres]
     ports: ["8000:8000"]
     volumes:
       - ./src:/app/src
@@ -35,6 +34,9 @@ services:
     #   # - POSTGRES_DB=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - reverse-proxy
+      - monitoring
 
   # redis:
   #   image: redis:6.0.14

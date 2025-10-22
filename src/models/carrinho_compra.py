@@ -2,6 +2,7 @@ from typing import Annotated, Optional
 
 from pydantic import AfterValidator, BaseModel
 
+
 class CarrinhoCompra(BaseModel):
     id_carrinho: Optional[int] = None
     id_cliente: int
