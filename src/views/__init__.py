@@ -1,4 +1,5 @@
 from . import (
+    account,
 	cliente,
 	carrinho,
 	management,
@@ -6,7 +7,9 @@ from . import (
  	relatorios,
 )
 
+
 __all__ = [
+    'account',
 	'cliente',
 	'carrinho',
 	'management',

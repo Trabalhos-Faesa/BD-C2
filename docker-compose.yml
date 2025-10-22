@@ -5,8 +5,7 @@ services:
   app:
     build: .
     container_name: app
-    # depends_on: [redis, grafana]
-    depends_on: [grafana]
+    depends_on: [postgres]
     ports: ["8000:8000"]
     volumes:
       - ./src:/app/src

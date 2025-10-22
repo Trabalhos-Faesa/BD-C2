@@ -8,12 +8,17 @@
             "name": "Python Debugger: FastAPI",
             "type": "debugpy",
             "request": "launch",
-            "module": "uvicorn",
+            "module": "fastapi",
             "args": [
-                "src.main:app",
-                "--reload"
+                "dev",
+                "src/main.py"
             ],
-            "jinja": true
+            // "module": "uvicorn",
+            // "args": [
+            //     "src.main:app",
+            //     "--reload"
+            // ],
+            // "jinja": true
         },
         {
             "name": "Python: Current File",
