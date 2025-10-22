@@ -58,3 +58,10 @@ CREATE TABLE pedido (
     status TEXT NOT NULL DEFAULT 'confirmado',
     id_carrinho INT NOT NULL REFERENCES carrinho_de_compras(id_carrinho)
 );
+
+CREATE TABLE relatorio (
+    id_relatorio INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    id_pedido INT NOT NULL REFERENCES pedido(id_pedido),
+    data_geracao TIMESTAMP DEFAULT NOW(),
+    conteudo TEXT
+);
