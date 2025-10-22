@@ -1,8 +1,15 @@
-from . import account, cliente, management
-
+from . import (
+	cliente,
+	carrinho,
+	management,
+	produto,
+ 	relatorios,
+)
 
 __all__ = [
-    'account',
-    'cliente',
-    'management',
+	'cliente',
+	'carrinho',
+	'management',
+	'produto',
+ 	'relatorios',
 ]

@@ -1,18 +1,16 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
-import views.cliente
-import views.account
-import views.relatorios
-import views
-import views.management
+
 from abstract import SQLResult, SQLResultStatus
+import views
 
 
 app = FastAPI(default_response_class=ORJSONResponse)
 
 app.include_router(views.management.router)
 app.include_router(views.cliente.router)
-app.include_router(views.account.router)
+app.include_router(views.carrinho.router)
+app.include_router(views.produto.router)
 app.include_router(views.relatorios.router)
 
 

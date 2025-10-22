@@ -1,9 +1,8 @@
-from typing import Optional
+from typing import Annotated, Optional
 
-from pydantic import BaseModel
+from pydantic import AfterValidator, BaseModel
 
-
-class Pedido(BaseModel):
+class pedidoi(BaseModel):
     id_pedido: Optional[int] = None
     id_cliente: int
     data_pedido: Optional[str] = None
