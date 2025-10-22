@@ -20,27 +20,27 @@ from utils.abstract import Singleton
 
 
 DB_CONNECTION_STRING = config('DB_CONNECTION_STRING')
-DB_CONNECTION_STRING_ASYNC: Optional[str] = config('DB_CONNECTION_STRING_ASYNC', default=None)
+# DB_CONNECTION_STRING_ASYNC: Optional[str] = config('DB_CONNECTION_STRING_ASYNC', default=None)
 
 
-def ensure_async_driver_dsn(connection_string: Union[str, URL]) -> Union[str, URL]:
-    """Ensure the SQLAlchemy URL uses an async driver (asyncpg) for PostgreSQL.
+# def ensure_async_driver_dsn(connection_string: Union[str, URL]) -> Union[str, URL]:
+#     """Ensure the SQLAlchemy URL uses an async driver (asyncpg) for PostgreSQL.
 
-    - If a URL object is provided, adjust its drivername to postgresql+asyncpg.
-    - If a string is provided, replace the scheme prefix when applicable.
-    """
-    if isinstance(connection_string, str):
-        s = connection_string
-        if DB_CONNECTION_STRING_ASYNC:
-            return DB_CONNECTION_STRING_ASYNC
-        if s.startswith('postgresql://') and 'postgresql+asyncpg://' not in s:
-            return s.replace('postgresql://', 'postgresql+asyncpg://', 1)
-        return s
+#     - If a URL object is provided, adjust its drivername to postgresql+asyncpg.
+#     - If a string is provided, replace the scheme prefix when applicable.
+#     """
+#     if isinstance(connection_string, str):
+#         s = connection_string
+#         if DB_CONNECTION_STRING_ASYNC:
+#             return DB_CONNECTION_STRING_ASYNC
+#         if s.startswith('postgresql://') and 'postgresql+asyncpg://' not in s:
+#             return s.replace('postgresql://', 'postgresql+asyncpg://', 1)
+#         return s
 
-    url = connection_string
-    if url.drivername.startswith('postgresql') and '+asyncpg' not in url.drivername:
-        return url.set(drivername='postgresql+asyncpg')
-    return url
+#     url = connection_string
+#     if url.drivername.startswith('postgresql') and '+asyncpg' not in url.drivername:
+#         return url.set(drivername='postgresql+asyncpg')
+#     return url
 
 
 def error_response(msg: str) -> SQLResultDict:
@@ -71,9 +71,10 @@ def get_async_engine(
     **kwargs,
 ) -> AsyncEngine:
     # Derive an async-friendly DSN if necessary
-    async_dsn = ensure_async_driver_dsn(connection_string)
+    # async_dsn = ensure_async_driver_dsn(connection_string)
     engine = create_async_engine(
-        async_dsn,
+        # async_dsn,
+        connection_string,
         *args,
         **kwargs
     )
