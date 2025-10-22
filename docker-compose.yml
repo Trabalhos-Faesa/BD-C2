@@ -35,6 +35,9 @@ services:
     #   # - POSTGRES_DB=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - reverse-proxy
+      - monitoring
 
   # redis:
   #   image: redis:6.0.14
